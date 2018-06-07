@@ -429,4 +429,12 @@ au BufNewFile,BufRead *.py match OverLength /\%81v.\+/
 au BufNewFile,BufRead *.R highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 au BufNewFile,BufRead *.R match OverLength /\%81v.\+/
 
+au BufNewFile,BufRead *.md set syntax=off
+
 set nosmartindent
+
+" Remove newlines from yank register
+function NNL()
+    let @"=substitute(strtrans(@"),'\^@', '', 'g')
+endfunction
+map <C-l> :call NNL()<CR>
