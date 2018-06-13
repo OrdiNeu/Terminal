@@ -11,21 +11,25 @@ unset SSH_ASKPASS
 #export PATH=/scratch/bin/anaconda2/bin:$PATH
 export PATH=$HOME/python/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.local/hdf5-1.8.17/bin:$PATH
 export LD_LIBRARY_PATH=$HOME/.local/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$HOME/.local/hdf5-1.8.17/lib:$LD_LIBRARY_PATH
 export PS1='(\!) \t \[\033[01;34m\]\h\[\033[00m\]:\w$ '
 export TKSRC="${HOME}/.local/bin"
 export EDITOR=vim
-#export PYTHONPATH='/mnt/work1/users/home2/fnguyen/python'
-#export PYTHONPATH=/scratch/bin/anaconda2/bin/python
+export HDF5_DIR=${HOME}/.local/hdf5-1.8.17
 # the login sequence on download.q is weird and conflicts w/ the python3 module
 unset PYTHONPATH 
+#export PYTHONPATH='/mnt/work1/users/home2/fnguyen/python'
+#export PYTHONPATH=/scratch/bin/anaconda2/bin/python
 
 # Modules
 #module load python/2.7
 #module load python3
-module load R/3.3.0
+#module load R/3.3.0
 module load bedtools/2.23.0
-module load gcc/6.2.0
+module load emacs/24.3
+#module load gcc/6.2.0
 DIR_TMP_FILE=${HOME}/.tmp_dir_chng.txt
 
 # General use
@@ -35,10 +39,12 @@ alias halp='top -b | head -n 10'            # halp:     What's throttling this m
 alias rcp='rsync -avP'                      # Rsync cp
 alias ..="cd .."                            # Go up one directory
 alias ...="cd ../../"                       # Go up two directories
+alias .2="cd ../../"                        # Alternate go up two directories
 alias .3="cd ../../../"                     # Go up three directories
 alias .4="cd ../../../../"                  # Go up four directories
 alias -- -="cd -"                           # Go to the previous directory
 alias tmux='TERM=xterm-256color tmux'       # Preferred 'tmux' implementation
+alias emacs='emacs -nw'                     # Preferred 'emacs' implementation
 alias pmine="top -b -n 1 | grep fnguyen"    # pmine:    What's the CPU/MEM/Status of all of my processes on this machine?
 alias pt="${HOME}/.local/bin/pytest"        # pt:       Run pytest
 alias cln="echo *.e* *.o* \"Y/N\"; read is_ok; if [ $is_ok -eq \"Y\" ]; then rm *.e* *.o*; fi"  # rm *.e* *.o* with confirmation
@@ -51,7 +57,7 @@ alias q="qrsh -q hoffmangroup -now no"
 alias qm='qrsh -q hoffmangroup -now no -l h_vmem=${M}G -l mem_requested=${M}G'
 alias sv="pwd >${DIR_TMP_FILE}"
 alias rl="while read i ; do echo \$i ; cd \$i ; done <${DIR_TMP_FILE}"
-alias qst="qstat"
+alias qst="qstat | sed 's/^/ /'"
 
 # SGE stats
 alias qavail="python3 ${HOME}/qavail.py"
@@ -65,13 +71,28 @@ lastjob() { qacct -o `whoami` -j | tail -n 45 | grep "jobnumber" | awk '{print $
 forensics() { qacct -j $1 | grep -B 9 -P "exit_status\\s+[1-9]"; }
 #alias rl="cd $(< ${HOME}/tmp_dir_chng.txt)"
 
-# added by Miniconda3 4.3.11 installer
+# Enable conda
 #export PATH="/mnt/work1/users/home2/fnguyen/miniconda3/bin:$PATH"
+#export PATH="/mnt/work1/users/home2/fnguyen/anaconda3/bin:$PATH"
+. /mnt/work1/users/home2/fnguyen/anaconda3/etc/profile.d/conda.sh
+#alias conda-py="source activate py-2.7.3; tput bel"
+
 if [ "$HOSTNAME" != "mordor" ]; then
-    tput bel    # Alarm when a qrsh host is grabbed
     # Also edit the bash history file location
     HISTFILE=${HOME}/bashhistory/${HOSTNAME}_$$.bash_history
     HISTSIZE=""
     HISTFILESIZE=""
+
+    # Also fix the terminal colours
+    export TERM=screen-256color
+
+    # Finally, enable conda-py automatically
+    conda activate py27
+
+    tput bel    # Alarm when a qrsh host is grabbed
 fi
 
+#if [ ! -n "$TMUX" ]; then
+#    # Remind me to commit stuff
+#    git status ${HOME}/scProject/
+#fi

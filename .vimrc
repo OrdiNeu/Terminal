@@ -424,14 +424,39 @@ au BufNewFile *.sh 0r ~/.vim/sh.skel | let IndentStyle = "bash" | :normal! G
 au BufNewFile *-lnb.html 0r ~/.vim/lnb.skel | let IndentStyle = "html" | :normal! G
 au BufNewFile *.py 0r ~/.vim/py.skel | let IndentStyle = "py" | :normal! G
 
-au BufNewFile,BufRead *.py highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-au BufNewFile,BufRead *.py match OverLength /\%81v.\+/
-au BufNewFile,BufRead *.R highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-au BufNewFile,BufRead *.R match OverLength /\%81v.\+/
+au BufNewFile,BufRead *.py :set colorcolumn=80
+au BufNewFile,BufRead *.R :set colorcolumn=80
+
+"au BufNewFile,BufRead *.py highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+"au BufNewFile,BufRead *.py match OverLength /\%81v.\+/
+"au BufNewFile,BufRead *.R highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+"au BufNewFile,BufRead *.R match OverLength /\%81v.\+/
 
 au BufNewFile,BufRead *.md set syntax=off
 
 set nosmartindent
+
+execute pathogen#infect()
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Terminal Helper Commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Vsplit new terminal
+function NewTerm()
+    :vsplit
+    :term
+    :wincmd j
+    :q
+    :set foldcolumn=0
+    :set nonu
+    :set nowrap
+    :set colorcolumn=-1
+endfunction
+nmap <leader>nt :call NewTerm()<cr>
+
+map [D gT
+map [C gt
 
 " Remove newlines from yank register
 function NNL()
