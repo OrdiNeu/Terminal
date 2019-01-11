@@ -19,8 +19,9 @@ if [ "$#" -eq 1 ]; then
 fi
 
 while true; do
-    clear
+    clear && printf '\e[3J'
     python3 ${HOME}/qavail.py "$TO_MONITOR"
+    echo
     qstat -g c
 
     # If we're supposed to monitor a job, ring a bell when it finishes
