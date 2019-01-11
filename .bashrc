@@ -18,6 +18,13 @@ export PS1='(\!) \t \[\033[01;34m\]\h\[\033[00m\]:\w$ '
 export TKSRC="${HOME}/.local/bin"
 export EDITOR=vim
 export HDF5_DIR=${HOME}/.local/hdf5-1.8.17
+export CHROMHMM=${HOME}/download/2018/ChromHMM
+
+# Prevent numpy from using more slots than what is allocated
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export OMP_NUM_THREADS=1
+export MAGICK_THREAD_LIMIT=${NSLOTS:-1}
 # the login sequence on download.q is weird and conflicts w/ the python3 module
 unset PYTHONPATH 
 #export PYTHONPATH='/mnt/work1/users/home2/fnguyen/python'
@@ -27,7 +34,7 @@ unset PYTHONPATH
 #module load python/2.7
 #module load python3
 #module load R/3.3.0
-module load bedtools/2.23.0
+#module load bedtools/2.23.0
 module load emacs/24.3
 #module load gcc/6.2.0
 DIR_TMP_FILE=${HOME}/.tmp_dir_chng.txt
@@ -58,6 +65,7 @@ alias qm='qrsh -q hoffmangroup -now no -l h_vmem=${M}G -l mem_requested=${M}G'
 alias sv="pwd >${DIR_TMP_FILE}"
 alias rl="while read i ; do echo \$i ; cd \$i ; done <${DIR_TMP_FILE}"
 alias qst="qstat | sed 's/^/ /'"
+alias qstl="qstat | sed 's/^/ /' | tail -n `tput lines`"
 
 # SGE stats
 alias qavail="python3 ${HOME}/qavail.py"
@@ -86,8 +94,10 @@ if [ "$HOSTNAME" != "mordor" ]; then
     # Also fix the terminal colours
     export TERM=screen-256color
 
-    # Finally, enable conda-py automatically
-    conda activate py27
+    # Finally, enable conda-py automatically, unless it's download.q or mordor
+    if [ "$HOSTNAME" != "n29vm2" ]; then
+        conda activate py27-2
+    fi
 
     tput bel    # Alarm when a qrsh host is grabbed
 fi
