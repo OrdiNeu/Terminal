@@ -39,6 +39,34 @@
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VAM
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" put this line first in ~/.vimrc
+set nocompatible | filetype indent plugin on | syn on
+
+fun! SetupVAM()
+  let c = get(g:, 'vim_addon_manager', {})
+  let g:vim_addon_manager = c
+  let c.plugin_root_dir = expand('$HOME', 1) . '/.vim/vim-addons'
+
+  " Force your ~/.vim/after directory to be last in &rtp always:
+  " let g:vim_addon_manager.rtp_list_hook = 'vam#ForceUsersAfterDirectoriesToBeLast'
+
+  " most used options you may want to use:
+  " let c.log_to_buf = 1
+  " let c.auto_install = 0
+  let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
+  if !isdirectory(c.plugin_root_dir.'/vim-addon-manager/autoload')
+    execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '
+        \       shellescape(c.plugin_root_dir.'/vim-addon-manager', 1)
+  endif
+
+  " This provides the VAMActivate command, you could be passing plugin names, too
+  call vam#ActivateAddons([], {})
+endfun
+call SetupVAM()
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -166,9 +194,9 @@ set ffs=unix,dos,mac
 " => Files, backups and undo
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn backup off, since most stuff is in SVN, git et.c anyway...
-set nobackup
-set nowb
-set noswapfile
+"set nobackup
+"set nowb
+"set noswapfile
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -422,10 +450,10 @@ endfunction
 set nu
 au BufNewFile *.sh 0r ~/.vim/sh.skel | let IndentStyle = "bash" | :normal! G
 au BufNewFile *-lnb.html 0r ~/.vim/lnb.skel | let IndentStyle = "html" | :normal! G
-au BufNewFile *.py 0r ~/.vim/py.skel | let IndentStyle = "py" | :normal! G
+au BufNewFile *.py 0r ~/.vim/py.skel | let IndentStyle = "py" | :normal! Gdd
 
-au BufNewFile,BufRead *.py :set colorcolumn=80
-au BufNewFile,BufRead *.R :set colorcolumn=80
+au BufNewFile,BufRead *.py :set colorcolumn=81
+au BufNewFile,BufRead *.R :set colorcolumn=81
 
 "au BufNewFile,BufRead *.py highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 "au BufNewFile,BufRead *.py match OverLength /\%81v.\+/
@@ -456,10 +484,33 @@ endfunction
 nmap <leader>nt :call NewTerm()<cr>
 
 map [D gT
+map OD gT
 map [C gt
+map OC gt
 
 " Remove newlines from yank register
 function NNL()
     let @"=substitute(strtrans(@"),'\^@', '', 'g')
 endfunction
 map <C-l> :call NNL()<CR>
+
+ActivateAddons vim-snippets snipmate
+
+" Syntactic settings
+"set statusline+=%#warningmsg#
+"set statusline+=%*
+set signcolumn=no
+"SyntasticStatuslineFlag()
+
+" More Syntactic settings
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" see :h syntastic-loclist-callback
+function! SyntasticCheckHook(errors)
+    if !empty(a:errors)
+        let g:syntastic_loc_list_height = min([len(a:errors), 10])
+    endif
+endfunction
