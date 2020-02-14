@@ -464,7 +464,7 @@ au BufNewFile,BufRead *.md set syntax=off
 
 set nosmartindent
 
-execute pathogen#infect()
+"execute pathogen#infect()
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Terminal Helper Commands
