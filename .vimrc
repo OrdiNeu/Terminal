@@ -448,9 +448,9 @@ endfunction
 "endif
 
 set nu
-au BufNewFile *.sh 0r ~/.vim/sh.skel | let IndentStyle = "bash" | :normal! G
-au BufNewFile *-lnb.html 0r ~/.vim/lnb.skel | let IndentStyle = "html" | :normal! G
-au BufNewFile *.py 0r ~/.vim/py.skel | let IndentStyle = "py" | :normal! Gdd
+"au BufNewFile *.sh 0r ~/.vim/sh.skel | let IndentStyle = "bash" | :normal! G
+"au BufNewFile *-lnb.html 0r ~/.vim/lnb.skel | let IndentStyle = "html" | :normal! G
+"au BufNewFile *.py 0r ~/.vim/py.skel | let IndentStyle = "py" | :normal! Gdd
 
 au BufNewFile,BufRead *.py :set colorcolumn=81
 au BufNewFile,BufRead *.R :set colorcolumn=81
